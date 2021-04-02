@@ -5,33 +5,65 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="login.css">
 </head>
 <body>
-    <div style="position: absolute; top:30%; bottom:30%; left: 30%; right: 30%">
-        <form>
-            <div class="form-group">
-              <label for="exampleInputEmail1">IP Address</label>
-              <input type="text" class="form-control" id="username" placeholder="Enter username">
-              <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+    <div class="container" id="container">
+        <div class="form-container sign-up-container">
+            <form action="#">
+                <h1>Create Account</h1>
+                <input type="text" placeholder="Device ID" id="signUpRpi" />
+                <input type="text" placeholder="Name" id="signUpName" />
+                <input type="text" placeholder="Username" id="signUpUsername" />
+                <input type="password" placeholder="Password" id="signUpPassword" />
+                <button id="sign_up" onclick="signUp()">Sign Up</button>
+            </form>
+        </div>
+        <div class="form-container sign-in-container">
+            <form action="#">
+                <h1>Sign in</h1>
+                <span>or use your account</span>
+                <input type="text" placeholder="Device ID" id="rpi" />
+                <input type="text" placeholder="Username" id="username" />
+                <input type="password" placeholder="Password" id="password" />
+                <a href="#">Forgot your password?</a>
+                <button id="sign_in" onclick="signIn()">Sign In</button>
+            </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Already have a device configured?</h1>
+                    <p>Head over here to log in!</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>First time setting up the device?</h1>
+                    <p>No worries, it won't take long!</p>
+                    <button class="ghost" id="signUp">Register</button>
+                </div>
             </div>
-            <div class="form-group">
-              <label for="exampleInputPassword1">RPi ID</label>
-              <input type="password" class="form-control" id="password" placeholder="Password">
-            </div>
-            <div class="form-group form-check">
-              <input type="checkbox" class="form-check-input" id="exampleCheck1">
-              <label class="form-check-label" for="exampleCheck1">Check me out</label>
-            </div>
-            <button type="submit" class="btn btn-primary" onclick="sendData()">Submit</button>
-          </form>
+        </div>
     </div>
 </body>
+<script src="login.js"></script>
 <script>
-    let username = document.getElementById('username');
-    let rpi_id = document.getElementById('password');
+    const signUpTabSwitcher = document.getElementById('signUp');
+    const signInTabSwitcher = document.getElementById('signIn');
+    const signInButton = document.getElementById('sign_in');
+    const signUpButton = document.getElementById('sign_up');
+    const container = document.getElementById('container');
+        
     const { ipcRenderer } = require('electron');
     const { networkInterfaces } = require('os');
+
+    signUpTabSwitcher.addEventListener('click', () => {
+        container.classList.add("right-panel-active");
+    });
+
+    signInTabSwitcher.addEventListener('click', () => {
+        container.classList.remove("right-panel-active");
+    });
 
     const nets = networkInterfaces();
     const results = Object.create(null); // Or just '{}', an empty object
@@ -47,12 +79,13 @@
             }
         }
     }
-    
-    function sendData() {
-        console.log('Send data called');
-        ipcRenderer.send('ipAddress', results)
-        ipcRenderer.send('username', username.value);
-        ipcRenderer.send('rpi_id', rpi_id.value);
-    }
+
+    // function sendData() {
+    //     console.log('Send data called');
+    //     ipcRenderer.send('ipAddress', results)
+    //     ipcRenderer.send('username', username.value);
+    //     ipcRenderer.send('rpi_id', rpi_id.value);
+    //     ipcRenderer.send('password', password.value);
+    // }
 </script>
 </html>
