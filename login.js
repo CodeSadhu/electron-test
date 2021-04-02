@@ -1,4 +1,6 @@
 const fs = require('fs');
+const CryptoJS = require('crypto-js');
+const CircularJSON = require('flatted');
 
 var fileArray = [
   './file_list/file1.pdf',
@@ -29,23 +31,22 @@ function signIn() {
 }
 
 function signUp() {
-  const rpi_id = document.getElementById("signUpRpi");
-  const username = document.getElementById("signUpUsername");
-  const password = document.getElementById("signUpPassword");
+  const signUpRpi = document.getElementById("signUpRpi");
+  const signUpUsername = document.getElementById("signUpUsername");
+  const signUpPassword = document.getElementById("signUpPassword");
 
   let signUpObject = {};
 
   const ip_address = results["Wi-Fi"][0];
 
-  signUpObject["username"] = username.value;
-  signUpObject["password"] = password.value;
-  signUpObject["rpi_id"] = rpi_id.value;
-  signUpObject["ip_address"] = ip_address;
-  // if (username.value === "guest" || username.value === "Guest" || username.value === "GUEST") {
-  //   signUpObject["can_access"] = fileArray;
-  // }
+  var encryptedPass = CryptoJS.SHA256(signUpPassword.value);
+  // var decryptedPass = CryptoJS.AES.decrypt(encryptedPass, signUpPassword.value);
 
-  signUpObject = JSON.stringify(signUpObject);
+  signUpObject["username"] = signUpUsername.value;
+  signUpObject["password"] = encryptedPass;
+  signUpObject["rpi_id"] = signUpRpi.value;
+  signUpObject["ip_address"] = ip_address;
+  
   console.log(signUpObject);
-  fs.appendFileSync("signUpCredentials.txt", signUpObject, "utf-8");
+  fs.appendFileSync("signUpCredentials.txt", JSON.stringify(signUpObject), "utf-8");
 }
