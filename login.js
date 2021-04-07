@@ -39,14 +39,19 @@ function signUp() {
 
   const ip_address = results["Wi-Fi"][0];
 
-  var encryptedPass = CryptoJS.SHA256(signUpPassword.value);
-  // var decryptedPass = CryptoJS.AES.decrypt(encryptedPass, signUpPassword.value);
+  var encryptedPass = CryptoJS.TripleDES.encrypt(signUpPassword.value, signUpRpi.value);
+  var decryptedPass = CryptoJS.TripleDES.decrypt(encryptedPass, signUpRpi.value);
+
+  decryptedPass = decryptedPass.toString(CryptoJS.enc.Utf8);
+  // var encryptedPass = CryptoJS.SHA256(signUpPassword.value, signUpRpi.value);
 
   signUpObject["username"] = signUpUsername.value;
-  signUpObject["password"] = encryptedPass;
+  signUpObject["password"] = CircularJSON.stringify(encryptedPass);
   signUpObject["rpi_id"] = signUpRpi.value;
   signUpObject["ip_address"] = ip_address;
+  signUpObject["decrypted"] = decryptedPass;
   
+  console.log(encryptedPass);
   console.log(signUpObject);
   fs.appendFileSync("signUpCredentials.txt", JSON.stringify(signUpObject), "utf-8");
 }
